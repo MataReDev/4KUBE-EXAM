@@ -1,0 +1,28 @@
+{{- range $key, $value := .Values.deployments }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ $key }}
+  labels:
+    app: {{ $key }}
+spec:
+  replicas: {{ $value.replicas | default $.Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ $key }}
+  template:
+    metadata:
+      labels:
+        app: {{ $key }}
+    spec:
+      containers:
+        - name: {{ $key }}
+          image: "{{ $value.image.repository }}:{{ $value.image.tag | default "latest" }}"
+          imagePullPolicy: "IfNotPresent"
+          {{- if $value.port}}
+          ports:
+            - containerPort: {{ $value.port }}
+              name: {{ $key }}
+          {{- end}}
+{{- end }}

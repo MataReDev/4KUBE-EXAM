@@ -1,0 +1,81 @@
+global:
+  replicaCount: 1
+  image:
+    tag: "latest"
+
+deployments:
+  fleetman-queue:
+    image:
+      repository: richardchesterwood/k8s-fleetman-queue
+      tag: release2
+    ports:
+      - 8161:8161
+      - 61616:61616
+    networks:
+      - fleetman
+
+  fleetman-position-simulator:
+    image:
+      repository: richardchesterwood/k8s-fleetman-position-simulator
+      tag: release2
+    dependsOn:
+      - fleetman-queue
+    environment:
+      - SPRING_PROFILES_ACTIVE=local-microservice
+    networks:
+      - fleetman
+
+  fleetman-position-tracker:
+    image:
+      repository: richardchesterwood/k8s-fleetman-position-tracker
+      tag: release3
+    ports:
+      - 8080:8080
+    environment:
+      - SPRING_PROFILES_ACTIVE=local-microservice
+    networks:
+      - fleetman
+
+  fleetman-api-gateway:
+    image:
+      repository: richardchesterwood/k8s-fleetman-api-gateway
+      tag: release2
+    ports:
+      - 30020:8080
+    environment:
+      - SPRING_PROFILES_ACTIVE=local-microservice
+    networks:
+      - fleetman
+
+  fleetman-webapp:
+    image:
+      repository: richardchesterwood/k8s-fleetman-webapp-angular
+      tag: release2
+    ports:
+      port: 30080
+      targetPort: 80
+    command: '/bin/bash -c "sed -ie \"s/\.default\.svc\.cluster\.local//\" /etc/nginx/nginx.conf && nginx -g \"daemon off;\""'
+    depends_on:
+      - fleetman-api-gateway
+    networks:
+      - fleetman
+
+  fleetman-mongodb:
+    image:
+      repository: mongo
+      tag: 3.6.5-jessie
+    ports:
+      - 27017:27017
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - fleetman
+
+networks:
+  fleetman:
+
+volumes:
+  mongo-data:
+    resources:
+      requests:
+        storage: "1Gi"
