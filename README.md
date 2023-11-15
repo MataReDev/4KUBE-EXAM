@@ -7,12 +7,12 @@ Pour cela nous devions :
 
  2) Créer un service interne pour chaque déploiement.
 
- 3) Utiliser un volume pour la base de données.<br>
+ 3) Utiliser un volume pour la base de données.
 
 
 
 
-Pour commencer, voici quelques commandes utiles à la création des conteneurs :<br>
+Pour commencer, voici quelques commandes utiles à la création des conteneurs :
 
 Commande pour générer le fichier manifest.yaml qui sert a lancer les pods :
 `helm template . > manifest.yaml`
