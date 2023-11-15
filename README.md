@@ -9,10 +9,10 @@ Pour cela nous devions :
 
  3) Utiliser un volume pour la base de données.
 
+<br/>
 
+Pour commencer, voici quelques commandes utiles à la création des conteneurs : 
 
-
-Pour commencer, voici quelques commandes utiles à la création des conteneurs :
 
 Commande pour générer le fichier manifest.yaml qui sert a lancer les pods :
 `helm template . > manifest.yaml`
