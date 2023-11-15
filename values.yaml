@@ -46,44 +46,41 @@ deployments:
     image:
       repository: mongo
       tag: 3.6.23
-    volumes:
-      - mongo-data:/data/db
+    volume:
+      mountPath: /data/db
 
 services:
   fleetman-queue:
-    type: LoadBalancer
     ports:
-      port: 8161
-      targetPort: 61616
-
-  fleetman-position-simulator:
-    clusterIp: None
-    depends_on: -queue
-    environment: enable
+      - id: 1
+        port: 8161
+        targetPort: 8161
+      - id: 2
+        port: 61616
+        targetPort: 61616
 
   fleetman-position-tracker:
-    type: LoadBalancer
     ports:
-      port: 8080
-      targetPort: 8080
+      - port: 30010
+        targetPort: 8080
     environment: enable
 
   fleetman-api-gateway:
-    type: LoadBalancer
     ports:
-      port: 30020
-      targetPort: 8080
+      - port: 30020
+        targetPort: 8080
     environment: enable
 
   fleetman-webapp:
-    type: LoadBalancer
     ports:
-      port: 30080
-      targetPort: 80
+      - port: 30080
+        targetPort: 80
 
   fleetman-mongodb:
     ports:
-      port: 27017
+      - port: 27017
+        targetPort: 27017
+
 
 networks:
   fleetman:

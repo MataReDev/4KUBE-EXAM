@@ -15,13 +15,19 @@ spec:
   {{- end}}
   {{- with $value.ports }}
   ports:
+    {{- range $portKey, $portValue := $value.ports }}
+    {{- if $portValue.id}}
+    - name: {{ $key -}}{{ $portValue.id -}}-service
+    {{- else }}
     - name: {{ $key -}}-service
-      port: {{ $value.ports.port }}
-      {{- if $value.ports.targetPort}}
-      targetPort: {{ $value.ports.targetPort }}
-      {{- else if $value.ports.port}}
-      targetPort: {{ $value.ports.port }}
+    {{- end }}
+      port: {{ $portValue.port }}
+      {{- if $portValue.targetPort}}
+      targetPort: {{ $portValue.targetPort }}
+      {{- else if $portValue.port}}
+      targetPort: {{ $portValue.port }}
       {{- end }}
+    {{- end}}
   {{- end}}
   selector:
     app: {{ $key }}
