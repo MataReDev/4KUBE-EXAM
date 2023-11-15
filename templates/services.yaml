@@ -13,7 +13,7 @@ spec:
   {{- if $value.clusterIp }}
   clusterIP: {{ $value.clusterIp }}
   {{- end}}
-  {{- with $value.ports  }}
+  {{- with $value.ports }}
   ports:
     - name: {{ $key -}}-service
       port: {{ $value.ports.port }}
