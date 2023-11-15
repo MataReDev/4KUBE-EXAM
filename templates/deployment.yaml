@@ -18,11 +18,17 @@ spec:
     spec:
       containers:
         - name: {{ $key }}
+          {{- if hasPrefix "-" $value.image.repository }}
+          image: "{{ $.Values.global.repository }}-{{ $value.image.repository }}:{{ $value.image.tag | default "latest" }}"
+          {{- else }}
           image: "{{ $value.image.repository }}:{{ $value.image.tag | default "latest" }}"
+          {{- end}}
           imagePullPolicy: "IfNotPresent"
           {{- if $value.port}}
           ports:
             - containerPort: {{ $value.port }}
               name: {{ $key }}
           {{- end}}
+          networks: 
+            - {{ $.Values.global.name}}
 {{- end }}

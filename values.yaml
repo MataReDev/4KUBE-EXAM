@@ -1,81 +1,103 @@
 global:
   replicaCount: 1
+  name: fleetman
+  repository: richardchesterwood/k8s-fleetman
+  environment: SPRING_PROFILES_ACTIVE=local-microservice
   image:
     tag: "latest"
 
 deployments:
   fleetman-queue:
     image:
-      repository: richardchesterwood/k8s-fleetman-queue
+      repository: -queue
       tag: release2
     ports:
-      - 8161:8161
-      - 61616:61616
-    networks:
-      - fleetman
+      - port: 8161
+        targetPort: 61616
 
   fleetman-position-simulator:
     image:
-      repository: richardchesterwood/k8s-fleetman-position-simulator
+      repository: -position-simulator
       tag: release2
     dependsOn:
       - fleetman-queue
-    environment:
-      - SPRING_PROFILES_ACTIVE=local-microservice
-    networks:
-      - fleetman
+    environment: enable
 
   fleetman-position-tracker:
     image:
-      repository: richardchesterwood/k8s-fleetman-position-tracker
+      repository: -position-tracker
       tag: release3
     ports:
-      - 8080:8080
-    environment:
-      - SPRING_PROFILES_ACTIVE=local-microservice
-    networks:
-      - fleetman
+      - port: 8080
+    environment: enable
 
   fleetman-api-gateway:
     image:
-      repository: richardchesterwood/k8s-fleetman-api-gateway
+      repository: -api-gateway
       tag: release2
     ports:
-      - 30020:8080
-    environment:
-      - SPRING_PROFILES_ACTIVE=local-microservice
-    networks:
-      - fleetman
+      - port: 30020
+        targetPort: 8080
+    environment: enable
 
   fleetman-webapp:
     image:
-      repository: richardchesterwood/k8s-fleetman-webapp-angular
+      repository: -webapp-angular
       tag: release2
     ports:
-      port: 30080
-      targetPort: 80
+      - port: 30080
+        targetPort: 80
     command: '/bin/bash -c "sed -ie \"s/\.default\.svc\.cluster\.local//\" /etc/nginx/nginx.conf && nginx -g \"daemon off;\""'
-    depends_on:
-      - fleetman-api-gateway
-    networks:
-      - fleetman
+    depends_on: fleetman-api-gateway {{global.name}}-{{deponds_on}}
 
   fleetman-mongodb:
     image:
       repository: mongo
       tag: 3.6.5-jessie
     ports:
-      - 27017:27017
+      - port: 27017
     volumes:
       - mongo-data:/data/db
-    networks:
-      - fleetman
+
+services:
+  fleetman-queue:
+    ports:
+      - 8161:8161
+      - 61616:61616
+
+  fleetman-position-simulator:
+    depends_on:
+      - fleetman-queue
+    environment:
+      - SPRING_PROFILES_ACTIVE=local-microservice
+
+  fleetman-position-tracker:
+    ports:
+      port: 8080
+      targetPort: 8080
+    environment:
+      - SPRING_PROFILES_ACTIVE=local-microservice
+
+  fleetman-api-gateway:
+    ports:
+      port: 30020
+      targetPort: 8080
+    environment:
+      - SPRING_PROFILES_ACTIVE=local-microservice
+
+  fleetman-webapp:
+    ports:
+      port: 30080
+      targetPort: 80
+    depends_on:
+      - fleetman-api-gateway
+
+  fleetman-mongodb:
+    ports:
+      port: 27017
 
 networks:
   fleetman:
 
 volumes:
   mongo-data:
-    resources:
-      requests:
-        storage: "1Gi"
