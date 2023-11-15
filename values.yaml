@@ -4,9 +4,11 @@ global:
   repository: supinfo4kube
   env: 
     - name: SPRING_PROFILES_ACTIVE
-      value: local-microservice
+      value: production-microservice
   image:
     tag: "latest"
+  volume:
+    accessMode: ReadWriteOnce
 
 deployments:
   fleetman-queue:
@@ -39,8 +41,7 @@ deployments:
       repository: /web-app
       tag: 1.0.0
     command: '/bin/bash -c "sed -ie \"s/\.default\.svc\.cluster\.local//\" /etc/nginx/nginx.conf && nginx -g \"daemon off;\""'
-    depends_on: fleetman-api-gateway {{global.name}}-{{deponds_on}}
-
+    
   fleetman-mongodb:
     image:
       repository: mongo
@@ -50,34 +51,35 @@ deployments:
 
 services:
   fleetman-queue:
+    type: LoadBalancer
     ports:
       port: 8161
       targetPort: 61616
 
   fleetman-position-simulator:
     clusterIp: None
-    depends_on:
-      - fleetman-queue
+    depends_on: -queue
     environment: enable
 
   fleetman-position-tracker:
+    type: LoadBalancer
     ports:
       port: 8080
       targetPort: 8080
     environment: enable
 
   fleetman-api-gateway:
+    type: LoadBalancer
     ports:
       port: 30020
       targetPort: 8080
     environment: enable
 
   fleetman-webapp:
+    type: LoadBalancer
     ports:
       port: 30080
       targetPort: 80
-    depends_on:
-      - fleetman-api-gateway
 
   fleetman-mongodb:
     ports:
