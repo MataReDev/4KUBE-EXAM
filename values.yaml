@@ -1,89 +1,76 @@
 global:
   replicaCount: 1
   name: fleetman
-  repository: richardchesterwood/k8s-fleetman
-  environment: SPRING_PROFILES_ACTIVE=local-microservice
+  repository: supinfo4kube
+  env: 
+    - name: SPRING_PROFILES_ACTIVE
+      value: local-microservice
   image:
     tag: "latest"
 
 deployments:
   fleetman-queue:
     image:
-      repository: -queue
-      tag: release2
-    ports:
-      - port: 8161
-        targetPort: 61616
+      repository: /queue
+      tag: 1.0.1
 
   fleetman-position-simulator:
     image:
-      repository: -position-simulator
-      tag: release2
+      repository: /position-simulator
+      tag: 1.0.1
     dependsOn:
       - fleetman-queue
     environment: enable
 
   fleetman-position-tracker:
     image:
-      repository: -position-tracker
-      tag: release3
-    ports:
-      - port: 8080
+      repository: /position-tracker
+      tag: 1.0.1
     environment: enable
 
   fleetman-api-gateway:
     image:
-      repository: -api-gateway
-      tag: release2
-    ports:
-      - port: 30020
-        targetPort: 8080
+      repository: /api-gateway
+      tag: 1.0.1
     environment: enable
 
   fleetman-webapp:
     image:
-      repository: -webapp-angular
-      tag: release2
-    ports:
-      - port: 30080
-        targetPort: 80
+      repository: /web-app
+      tag: 1.0.0
     command: '/bin/bash -c "sed -ie \"s/\.default\.svc\.cluster\.local//\" /etc/nginx/nginx.conf && nginx -g \"daemon off;\""'
     depends_on: fleetman-api-gateway {{global.name}}-{{deponds_on}}
 
   fleetman-mongodb:
     image:
       repository: mongo
-      tag: 3.6.5-jessie
-    ports:
-      - port: 27017
+      tag: 3.6.23
     volumes:
       - mongo-data:/data/db
 
 services:
   fleetman-queue:
     ports:
-      - 8161:8161
-      - 61616:61616
+      port: 8161
+      targetPort: 61616
 
   fleetman-position-simulator:
+    clusterIp: None
     depends_on:
       - fleetman-queue
-    environment:
-      - SPRING_PROFILES_ACTIVE=local-microservice
+    environment: enable
 
   fleetman-position-tracker:
     ports:
       port: 8080
       targetPort: 8080
-    environment:
-      - SPRING_PROFILES_ACTIVE=local-microservice
+    environment: enable
 
   fleetman-api-gateway:
     ports:
       port: 30020
       targetPort: 8080
-    environment:
-      - SPRING_PROFILES_ACTIVE=local-microservice
+    environment: enable
 
   fleetman-webapp:
     ports:
