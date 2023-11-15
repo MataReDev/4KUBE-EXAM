@@ -13,6 +13,7 @@ Pour cela nous devions :
 
 Pour commencer, voici quelques commandes utiles à la création des conteneurs : 
 
+<br/>
 
 Commande pour générer le fichier manifest.yaml qui sert a lancer les pods :
 `helm template . > manifest.yaml`
