@@ -19,9 +19,9 @@ spec:
       containers:
         - name: {{ $key }}
           {{- if hasPrefix "/" $value.image.repository }}
-          image: "{{ $.Values.global.repository }}{{ $value.image.repository }}:{{ $value.image.tag | default "1.0.1" }}"
+          image: "{{ $.Values.global.repository }}{{ $value.image.repository }}:{{ $value.image.tag | default $.Values.global.image.tag }}"
           {{- else }}
-          image: "{{ $value.image.repository }}:{{ $value.image.tag | default "1.0.1" }}"
+          image: "{{ $value.image.repository }}:{{ $value.image.tag | default $.Values.global.image.tag }}"
           {{- end}}
           imagePullPolicy: "IfNotPresent"
           {{- if not (eq $value.environment "disable") }}
