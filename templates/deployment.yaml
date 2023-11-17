@@ -24,7 +24,7 @@ spec:
           image: "{{ $value.image.repository }}:{{ $value.image.tag | default "latest" }}"
           {{- end}}
           imagePullPolicy: "IfNotPresent"
-          {{- if eq $value.environment "enable"}}
+          {{- if eq $value.environment "enable" }}
           env:
             {{- range $envkey, $envvalue := $.Values.global.env }}
             - name: {{ $envvalue.name }}
@@ -33,11 +33,11 @@ spec:
           {{- end }}
       {{- if $value.volume}}
           volumeMounts:
-            - mouthPath: {{ $value.volume.mountPath }}
-              name: {{ $key }}
+            - mountPath: {{ $value.volume.mountPath }}
+              name: {{ $key }}-0
       volumes:
-        - name: {{ $key }}
+        - name: {{ $key }}-0
           persistentVolumeClaim: 
-            claimName: mongo-data
+            claimName: mongodb-pv-claim
       {{- end }}
 {{- end }}

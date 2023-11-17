@@ -5,8 +5,8 @@ metadata:
   name: {{ $key }}
 spec:
   accessModes: 
-    - "ReadWriteOnce"
+  - ReadWriteOnce
   resources:
     requests:
-      storage: "4Gi"
+      storage: 4Gi
 {{- end }}

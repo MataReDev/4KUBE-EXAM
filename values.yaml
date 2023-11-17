@@ -11,12 +11,12 @@ global:
     accessMode: ReadWriteOnce
 
 deployments:
-  fleetman-queue:
+  queue:
     image:
       repository: /queue
       tag: 1.0.1
 
-  fleetman-position-simulator:
+  position-simulator:
     image:
       repository: /position-simulator
       tag: 1.0.1
@@ -24,25 +24,25 @@ deployments:
       - fleetman-queue
     environment: enable
 
-  fleetman-position-tracker:
+  position-tracker:
     image:
       repository: /position-tracker
       tag: 1.0.1
     environment: enable
 
-  fleetman-api-gateway:
+  api-gateway:
     image:
       repository: /api-gateway
       tag: 1.0.1
     environment: enable
 
-  fleetman-webapp:
+  webapp:
     image:
       repository: /web-app
       tag: 1.0.0
-    command: '/bin/bash -c "sed -ie \"s/\.default\.svc\.cluster\.local//\" /etc/nginx/nginx.conf && nginx -g \"daemon off;\""'
-    
-  fleetman-mongodb:
+    environment: enable
+
+  mongodb:
     image:
       repository: mongo
       tag: 3.6.23
@@ -50,40 +50,38 @@ deployments:
       mountPath: /data/db
 
 services:
-  fleetman-queue:
+  queue:
+    type: NodePort
     ports:
       - id: 1
         port: 8161
-        targetPort: 8161
+        nodePort: 30010
       - id: 2
         port: 61616
-        targetPort: 61616
 
-  fleetman-position-tracker:
+  position-tracker:
+    type: ClusterIP
     ports:
-      - port: 30010
-        targetPort: 8080
-    environment: enable
+      - port: 8080
 
-  fleetman-api-gateway:
+  api-gateway:
+    type: ClusterIP
     ports:
-      - port: 30020
-        targetPort: 8080
-    environment: enable
+      - port: 8080
 
-  fleetman-webapp:
+  webapp:
+    type: NodePort
     ports:
-      - port: 30080
-        targetPort: 80
+      - port: 80
+        nodePort: 30080
 
-  fleetman-mongodb:
+  mongodb:
+    type: ClusterIP
     ports:
       - port: 27017
-        targetPort: 27017
-
 
 networks:
   fleetman:
 
 volumes:
-  mongo-data:
+  mongodb-pv-claim:
