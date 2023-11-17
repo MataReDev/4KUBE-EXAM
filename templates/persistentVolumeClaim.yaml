@@ -5,8 +5,16 @@ metadata:
   name: {{ $key }}
 spec:
   accessModes: 
-  - ReadWriteOnce
+    {{- if $value.accessModes }}
+    - {{ $value.accessModes }}
+    {{- else }}
+    - {{ $.Values.global.volume.accessMode }}
+    {{- end}}
   resources:
     requests:
-      storage: 4Gi
+      {{- if $value.resources.requests.storage }}
+      storage: {{ $value.resources.requests.storage }}
+      {{- else }}
+      storage: {{ $.Values.global.volume.storage }}
+      {{- end}}
 {{- end }}

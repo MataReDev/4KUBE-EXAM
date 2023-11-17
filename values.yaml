@@ -8,39 +8,31 @@ global:
   image:
     tag: "latest"
   volume:
+    storage: 4Gi
     accessMode: ReadWriteOnce
 
 deployments:
   queue:
     image:
       repository: /queue
-      tag: 1.0.1
+    environment: disable
 
   position-simulator:
     image:
       repository: /position-simulator
-      tag: 1.0.1
-    dependsOn:
-      - fleetman-queue
-    environment: enable
 
   position-tracker:
     image:
       repository: /position-tracker
-      tag: 1.0.1
-    environment: enable
 
   api-gateway:
     image:
       repository: /api-gateway
-      tag: 1.0.1
-    environment: enable
 
   webapp:
     image:
       repository: /web-app
       tag: 1.0.0
-    environment: enable
 
   mongodb:
     image:
@@ -48,6 +40,7 @@ deployments:
       tag: 3.6.23
     volume:
       mountPath: /data/db
+    environment: disable
 
 services:
   queue:
@@ -80,8 +73,9 @@ services:
     ports:
       - port: 27017
 
-networks:
-  fleetman:
-
 volumes:
   mongodb-pv-claim:
+    accessModes:
+    resources:
+      requests:
+        storage:
