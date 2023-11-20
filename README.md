@@ -18,36 +18,52 @@ Pour cela nous devions :
 ### Lancement du projet
 
 Commande pour générer le fichier manifest.yaml qui sert a lancer les pods :
-`helm template . > manifest.yaml`
+```bash
+helm template . > manifest.yaml
+```
 
 Commande pour installer le fichier manifest et créer les pods :
-`helm install kubeexam .`
+```bash
+helm install kubeexam .
+```
 
 ### Les pods
 
 Commande pour afficher la liste des pods créés :
-`kubectl get pods`
+```bash
+kubectl get pods
+```
 
 Commande pour afficher les infos du pod sélectionné :
-`kubectl describe pod [idPod]`
+```bash
+kubectl describe pod [idPod]
+```
 
 ### Les deployments
 
 Commande pour afficher la liste des deployments créés :
-`kubectl get deployments`
+```bash
+kubectl get deployments
+```
 
 
 Commande pour afficher les infos du deployments sélectionné :
-`kubectl describe deployment [idDeployment]`
+```bash
+kubectl describe deployment [idDeployment]
+```
 
 ### Les services
 
 Commande pour afficher la liste des services créés :
-`kubectl get services`
+```bash
+kubectl get services
+```
 
 
 Commande pour afficher les infos du services sélectionné :
-`kubectl describe service [idService]`
+```bash
+kubectl describe service [idService]
+```
 
 
 ## La Structure des Fichiers du Projet
