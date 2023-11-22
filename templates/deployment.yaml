@@ -31,6 +31,22 @@ spec:
               value: {{ $envvalue.value }}
             {{- end}}
           {{- end }}
+          resources:
+            limits:
+              cpu: {{- if index $.Values.global.resources "limits" }}
+                {{- if index $.Values.global.resources.limits "cpu" }} {{ $.Values.global.resources.limits.cpu }}{{ end }}
+              {{- end }}
+              memory: {{- if index $.Values.global.resources "limits" }}
+                {{- if index $.Values.global.resources.limits "memory" }} {{ $.Values.global.resources.limits.memory }}{{ end }}
+              {{- end }}
+            requests:
+              cpu: {{- if index $.Values.global.resources "requests" }}
+                {{- if index $.Values.global.resources.requests "cpu" }} {{ $.Values.global.resources.requests.cpu }}{{ end }}
+              {{- end }}
+              memory: {{- if index $.Values.global.resources "requests" }}
+                {{- if index $.Values.global.resources.requests "memory" }} {{ $.Values.global.resources.requests.memory }}{{ end }}
+              {{- end }}
+
       {{- if $value.volume}}
           volumeMounts:
             - mountPath: {{ $value.volume.mountPath }}

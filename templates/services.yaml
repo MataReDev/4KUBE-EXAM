@@ -21,9 +21,15 @@ spec:
     {{- else }}
     - name: {{ $key -}}-service
     {{- end }}
+      {{- if $portValue.protocol}}
+      protocol: {{ $portValue.protocol }}
+      {{- end }}
       port: {{ $portValue.port }}
       {{- if $portValue.nodePort}}
       nodePort: {{ $portValue.nodePort }}
+      {{- end }}
+      {{- if $portValue.targetPort}}
+      targetPort: {{ $portValue.targetPort }}
       {{- end }}
     {{- end}}
   {{- end}}

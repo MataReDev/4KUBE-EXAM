@@ -11,6 +11,14 @@ global:
     storage: 4Gi
     accessMode: ReadWriteOnce
 
+  resources:
+    limits:
+      cpu: "1000m"
+      memory: "512Mi"
+    requests:
+      cpu: "500m"
+      memory: "256Mi"
+
 deployments:
   queue:
     image:
