@@ -201,6 +201,35 @@ env:
     value: {{ $envvalue.value }}
 ```
 
+#### Gestion des ressources
+Le bloc de configuration ci-dessous est utilisé pour définir les ressources Kubernetes (CPU et mémoire) pour les déploiements. Il utilise les valeurs fournies dans le fichier de configuration.
+
+- Limites (limits) :
+  - CPU : La quantité maximale de CPU qu'un conteneur peut utiliser.
+  - Mémoire : La quantité maximale de mémoire qu'un conteneur peut utiliser.
+- Demandes (requests) :
+  - CPU : La quantité initiale de CPU que le conteneur demande.
+  - Mémoire : La quantité initiale de mémoire que le conteneur demande.
+Le code utilise des conditions pour vérifier si les valeurs limites et demandes sont définies dans le fichier de valeurs, et les utilise le cas échéant.
+
+```yaml
+ resources:
+    limits:
+      cpu: {{- if index $.Values.global.resources "limits" }}
+        {{- if index $.Values.global.resources.limits "cpu" }} {{ $.Values.global.resources.limits.cpu }}{{ end }}
+      {{- end }}
+      memory: {{- if index $.Values.global.resources "limits" }}
+        {{- if index $.Values.global.resources.limits "memory" }} {{ $.Values.global.resources.limits.memory }}{{ end }}
+      {{- end }}
+    requests:
+      cpu: {{- if index $.Values.global.resources "requests" }}
+        {{- if index $.Values.global.resources.requests "cpu" }} {{ $.Values.global.resources.requests.cpu }}{{ end }}
+      {{- end }}
+      memory: {{- if index $.Values.global.resources "requests" }}
+        {{- if index $.Values.global.resources.requests "memory" }} {{ $.Values.global.resources.requests.memory }}{{ end }}
+      {{- end }}
+```
+
 #### Points de Montage de Volume
 Les points de montage de volume sont définis si spécifiés dans le déploiement.
 
