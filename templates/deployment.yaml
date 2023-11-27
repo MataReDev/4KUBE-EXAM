@@ -46,7 +46,6 @@ spec:
               memory: {{- if index $.Values.global.resources "requests" }}
                 {{- if index $.Values.global.resources.requests "memory" }} {{ $.Values.global.resources.requests.memory }}{{ end }}
               {{- end }}
-
       {{- if $value.volume}}
           volumeMounts:
             - mountPath: {{ $value.volume.mountPath }}
