@@ -21,7 +21,7 @@ Pour cela nous devions :
 ### Lancement du projet
 >>>>>>> a4fa60c3ed0ce98faaa99bd7ec2c2e3d8ea1e877
 
-Commande pour générer le fichier manifest.yaml qui sert a lancer les pods :
+Commande pour générer le fichier manifest.yaml qui sert à lancer les pods :
 ```bash
 helm template . > manifest.yaml
 ```
@@ -182,7 +182,7 @@ spec:
 - Sélecteur de Pods (selector) : Spécifie le sélecteur de pods pour le déploiement.
 - Conteneurs (containers) : Définit les conteneurs à exécuter dans les pods, incluant l'image, la politique de tirage d'image, les variables d'environnement, et les points de montage de volume.
 - Volumes (volumes) : Définit les volumes à monter dans les pods, le cas échéant.
-- Noms des Conteneurs
+- Noms des conteneurs
 - Les noms des conteneurs sont dérivés du nom du déploiement.
 
 ``` yaml
@@ -250,7 +250,7 @@ La boucle range se termine à la fin du code.
 {{- end }}
 ```
 
-Cette configuration génère des déploiements Kubernetes basés sur les spécifications fournies dans le fichier de valeurs. Chaque déploiement a un nom et une configuration spécifiques, avec la possibilité de définir des répliques, des conteneurs, des volumes, et des variables d'environnement personnalisés.
+Cette configuration génère des déploiements Kubernetes basés sur les spécifications fournies dans le fichier de valeurs. Chaque déploiement a un nom et une configuration spécifiques, avec la possibilité de définir des répliques, des conteneurs, des volumes, et des variables d'environnement personnalisé.
 
 
 
