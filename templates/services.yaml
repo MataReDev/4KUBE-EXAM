@@ -3,9 +3,9 @@
 apiVersion: v1
 kind: Service
 metadata:
+  name: {{$.Values.global.name }}-{{ $key }}
   labels:
     app: {{ $key }}
-  name: {{ $key }}
 spec:
   {{- if $value.type }}
   type: {{ $value.type }}
@@ -15,13 +15,23 @@ spec:
   {{- end}}
   {{- with $value.ports }}
   ports:
+    {{- range $portKey, $portValue := $value.ports }}
+    {{- if $portValue.id}}
+    - name: {{ $key -}}-{{ $portValue.id -}}-service
+    {{- else }}
     - name: {{ $key -}}-service
-      port: {{ $value.ports.port }}
-      {{- if $value.ports.targetPort}}
-      targetPort: {{ $value.ports.targetPort }}
-      {{- else if $value.ports.port}}
-      targetPort: {{ $value.ports.port }}
+    {{- end }}
+      {{- if $portValue.protocol}}
+      protocol: {{ $portValue.protocol }}
       {{- end }}
+      port: {{ $portValue.port }}
+      {{- if $portValue.nodePort}}
+      nodePort: {{ $portValue.nodePort }}
+      {{- end }}
+      {{- if $portValue.targetPort}}
+      targetPort: {{ $portValue.targetPort }}
+      {{- end }}
+    {{- end}}
   {{- end}}
   selector:
     app: {{ $key }}

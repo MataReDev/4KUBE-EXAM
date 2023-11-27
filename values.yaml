@@ -6,87 +6,84 @@ global:
     - name: SPRING_PROFILES_ACTIVE
       value: production-microservice
   image:
-    tag: "latest"
+    tag: "1.0.1"
   volume:
+    storage: 4Gi
     accessMode: ReadWriteOnce
 
+  resources:
+    limits:
+      cpu: "1000m"
+      memory: "512Mi"
+    requests:
+      cpu: "500m"
+      memory: "256Mi"
+
 deployments:
-  fleetman-queue:
+  queue:
     image:
       repository: /queue
-      tag: 1.0.1
+    environment: disable
 
-  fleetman-position-simulator:
+  position-simulator:
     image:
       repository: /position-simulator
-      tag: 1.0.1
-    dependsOn:
-      - fleetman-queue
-    environment: enable
 
-  fleetman-position-tracker:
+  position-tracker:
     image:
       repository: /position-tracker
-      tag: 1.0.1
-    environment: enable
 
-  fleetman-api-gateway:
+  api-gateway:
     image:
       repository: /api-gateway
-      tag: 1.0.1
-    environment: enable
 
-  fleetman-webapp:
+  webapp:
     image:
       repository: /web-app
       tag: 1.0.0
-    command: '/bin/bash -c "sed -ie \"s/\.default\.svc\.cluster\.local//\" /etc/nginx/nginx.conf && nginx -g \"daemon off;\""'
-    
-  fleetman-mongodb:
+
+  mongodb:
     image:
       repository: mongo
       tag: 3.6.23
-    volumes:
-      - mongo-data:/data/db
+    volume:
+      mountPath: /data/db
+    environment: disable
 
 services:
-  fleetman-queue:
-    type: LoadBalancer
+  queue:
+    type: NodePort
     ports:
-      port: 8161
-      targetPort: 61616
+      - id: 1
+        port: 8161
+        nodePort: 30010
+      - id: 2
+        port: 61616
 
-  fleetman-position-simulator:
-    clusterIp: None
-    depends_on: -queue
-    environment: enable
-
-  fleetman-position-tracker:
-    type: LoadBalancer
+  position-tracker:
+    type: ClusterIP
     ports:
-      port: 8080
-      targetPort: 8080
-    environment: enable
+      - port: 8080
 
-  fleetman-api-gateway:
-    type: LoadBalancer
+  api-gateway:
+    type: ClusterIP
     ports:
-      port: 30020
-      targetPort: 8080
-    environment: enable
+      - port: 8080
 
-  fleetman-webapp:
-    type: LoadBalancer
+  webapp:
+    type: NodePort
     ports:
-      port: 30080
-      targetPort: 80
+      - port: 80
+        nodePort: 30080
 
-  fleetman-mongodb:
+  mongodb:
+    type: ClusterIP
     ports:
-      port: 27017
-
-networks:
-  fleetman:
+      - port: 27017
 
 volumes:
-  mongo-data:
+  mongodb-pv-claim:
+    accessModes:
+    resources:
+      requests:
+        storage:
