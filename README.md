@@ -386,6 +386,12 @@ resources:
     {{- end}}
 ```
 
+**Les sondes :**
+
+Les sondes permettent de vérifier l'état d'un conteneur ou d'une application s'exécutant dans un pod.
+
+
+
 #### Fin de la Boucle
 La boucle `range` se termine à la fin du code.
 
@@ -395,7 +401,6 @@ La boucle `range` se termine à la fin du code.
 
 Cette configuration génère des réclamations de volumes persistants Kubernetes basées sur les spécifications fournies dans le fichier de valeurs. Chaque réclamation de volume persistant a un nom spécifique et une configuration détaillée, avec la possibilité de définir les modes d'accès et les ressources de stockage personnalisés.
 
-## Les Sondes
 
 
 
