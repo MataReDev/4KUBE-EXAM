@@ -12,14 +12,9 @@ Pour cela nous devions :
  4) Mettre en place des sondes pour contrôler les pods
 
 ***
-
-<<<<<<< HEAD
-<br/>
-=======
 ## Les Commandes Utiles
 
 ### Lancement du projet
->>>>>>> a4fa60c3ed0ce98faaa99bd7ec2c2e3d8ea1e877
 
 Commande pour générer le fichier manifest.yaml qui sert à lancer les pods :
 ```bash
