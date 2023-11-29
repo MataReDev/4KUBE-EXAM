@@ -38,9 +38,6 @@ deployments:
     image:
       repository: /web-app
       tag: 1.0.0
-    probes:
-      startupProbe:
-        enabled: false
 
   mongodb:
     image:
@@ -49,6 +46,8 @@ deployments:
     volume:
       mountPath: /data/db
     environment: disable
+    volumes:
+      claimName: mongodb-pv-claim
 
 services:
   queue:

@@ -44,22 +44,13 @@ spec:
               memory: {{- if index $.Values.global.resources "requests" }}
                 {{- if index $.Values.global.resources.requests "memory" }} {{ $.Values.global.resources.requests.memory }}{{ end }}
               {{- end }}
-          {{- if and (hasKey $value "probes") (hasKey $value.probes "startupProbe") $value.probes.startupProbe.enabled }}
-          startupProbe:
-            httpGet:
-              path: {{ $.Values.global.probes.startupProbe.path }}
-              port: {{ $.Values.global.probes.startupProbe.port }}
-            initialDelaySeconds: {{ $.Values.global.probes.startupProbe.initialDelaySeconds }}
-            periodSeconds: {{ $.Values.global.probes.startupProbe.periodSeconds }}
-          {{- end }}
-
       {{- if $value.volume}}
           volumeMounts:
             - mountPath: {{ $value.volume.mountPath }}
-              name: {{ $key }}-0
+              name: {{ $key }}
       volumes:
-        - name: {{ $key }}-0
+        - name: {{ $key }}
           persistentVolumeClaim: 
-            claimName: mongodb-pv-claim
+            claimName: {{ $value.volumes.claimName }}
       {{- end }}
 {{- end }}
