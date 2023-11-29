@@ -2,9 +2,6 @@ global:
   replicaCount: 1
   name: fleetman
   repository: supinfo4kube
-  env: 
-    - name: SPRING_PROFILES_ACTIVE
-      value: production-microservice
   image:
     tag: "1.0.1"
   volume:
@@ -41,6 +38,9 @@ deployments:
     image:
       repository: /web-app
       tag: 1.0.0
+    probes:
+      startupProbe:
+        enabled: false
 
   mongodb:
     image:
