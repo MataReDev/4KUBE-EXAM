@@ -48,6 +48,17 @@ deployments:
     environment: disable
     volumes:
       claimName: mongodb-pv-claim
+    probes:
+      livenessProbe:
+        command:
+          - mongo
+          - --eval
+          - "db.adminCommand('ping')"
+      readinessProbe:
+        command:
+          - mongo
+          - --eval
+          - "db.adminCommand('ping')"
 
 services:
   queue:
