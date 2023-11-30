@@ -238,7 +238,7 @@ Les points de montage de volume sont définis si spécifiés dans le déploiemen
 ``` yaml
 volumeMounts:
   - mountPath: {{ $value.volume.mountPath }}
-    name: {{ $key }}-0
+    name: {{ $key }}
 ```
 
 #### Fin de la Boucle
