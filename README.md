@@ -199,7 +199,7 @@ image: "{{ $.Values.global.repository }}{{ $value.image.repository }}:{{ $value.
 Les variables d'environnement sont définies en fonction des spécifications du déploiement et des variables globales.
 
 ``` yaml
-envFtom:
+envFrom:
   - name: env-secret
 ```
 
