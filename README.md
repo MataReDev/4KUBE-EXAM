@@ -1,5 +1,7 @@
 # 4KUBE-EXAM
 
+PROJET : Mathys GOUDAL - Simon LALANE
+
 Pour ce projet nous devions mettre en place application distribuée permettant de suivre en temps réel une flotte de véhicules effectuant des livraisons.
 
 Pour cela nous devions :
