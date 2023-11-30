@@ -7,7 +7,7 @@ Pour cela nous devions :
 
  2) Créer un service interne pour chaque déploiement.
 
- 3) Utiliser un volume pour la base de données.
+ 3) Utiliser un volume pour la base de données. 
 
  4) Mettre en place des sondes pour contrôler les pods
 
@@ -16,12 +16,12 @@ Pour cela nous devions :
 
 ### Lancement du projet
 
-Commande pour générer le fichier manifest.yaml qui sert à lancer les pods :
+Commande pour générer les fichiers de configuration Kubernetes à partir d'un chart Helm :
 ```bash
 helm template . > manifest.yaml
 ```
 
-Commande pour installer le fichier manifest et créer les pods :
+Commande pour installer le chart Helm du répertoire actuel dans votre cluster Kubernetes et lui donne le nom de release "kubeexam". Après l'exécution de cette commande, les ressources définies dans le chart Helm seront déployées dans votre cluster :
 ```bash
 helm install kubeexam .
 ```
@@ -189,18 +189,26 @@ spec:
 ```
 
 #### Image du Conteneur
-L'image du conteneur est déterminée en fonction des spécifications du déploiement, avec une logique conditionnelle pour le chemin du référentiel d'image.
+Le code ci-dessus permet de construire dynamiquement l'URL de l'image du conteneur en fonction du chemin du référentiel spécifié, avec une logique conditionnelle pour traiter les références absolues et relatives. La politique de récupération de l'image est également définie pour optimiser les performances en évitant de récupérer l'image si elle est déjà présente
 
 ``` yaml
+{{- if hasPrefix "/" $value.image.repository }}
 image: "{{ $.Values.global.repository }}{{ $value.image.repository }}:{{ $value.image.tag | default $.Values.global.image.tag }}"
+{{- else }}
+image: "{{ $value.image.repository }}:{{ $value.image.tag | default $.Values.global.image.tag }}"
+{{- end}}
+imagePullPolicy: "IfNotPresent"
 ```
 
 #### Variables d'Environnement
 Les variables d'environnement sont définies en fonction des spécifications du déploiement et des variables globales.
 
 ``` yaml
+{{- if not (eq $value.environment "disable") }}
 envFrom:
-  - name: env-secret
+  - secretRef:
+    name: env-secret
+{{- end }}
 ```
 
 #### Gestion des ressources
@@ -231,6 +239,86 @@ Le code utilise des conditions pour vérifier si les valeurs limites et demandes
         {{- if index $.Values.global.resources.requests "memory" }} {{ $.Values.global.resources.requests.memory }}{{ end }}
       {{- end }}
 ```
+#### Les sondes
+
+Le code ci-dessous est un ensemble de modèle pour définir des sondes de vitalité (liveness probes) et de disponibilité (readiness probes) dans des fichiers de configuration YAML Kubernetes. Voici une explication de la structure et de l'utilisation de ces modèles
+
+Vérification de la Condition pour les Sondes
+
+```yaml
+{{- if hasKey $value "probes" }}
+```
+
+Configuration de la Sonde de Vitalité
+
+```yaml
+{{- if hasKey $value.probes "livenessProbe" }}
+livenessProbe:
+  {{- if hasKey $value.probes.livenessProbe "command" }}
+  exec:
+    command:
+      {{- range $value.probes.livenessProbe.command }}
+      - {{ . }}
+      {{- end }}
+  {{- end }}
+  {{- if hasKey $value.probes.livenessProbe "httpGet" }}
+  httpGet:
+    path: {{ $value.probes.livenessProbe.httpGet.path | default "/" }}
+    port: {{ $value.probes.livenessProbe.httpGet.port | default 80 }}
+    scheme: {{ $value.probes.livenessProbe.httpGet.scheme | default "HTTP" }}
+    host: {{ $value.probes.livenessProbe.httpGet.host | default "localhost" }}
+  {{- end }}
+  {{- if hasKey $value.probes.livenessProbe "tcpSocket" }}
+  tcpSocket:
+    port: {{ $value.probes.livenessProbe.tcpSocket.port | default 80 }}
+  {{- end }}            
+  initialDelaySeconds: {{ $value.probes.livenessProbe.initialDelaySeconds | default 1 }}
+  periodSeconds: {{ $value.probes.livenessProbe.periodSeconds | default 10 }}
+  timeoutSeconds: {{ $value.probes.livenessProbe.timeoutSeconds | default 5 }}
+  successThreshold: {{ $value.probes.livenessProbe.timeoutSeconds | default 1 }}
+  failureThreshold: {{ $value.probes.livenessProbe.timeoutSeconds | default 2 }}
+{{- end }}
+```
+
+Configuration de la Sonde de Disponibilité
+
+```yaml
+{{- if hasKey $value.probes "readinessProbe" }}
+readinessProbe:
+  {{- if hasKey $value.probes.readinessProbe "command" }}
+  exec:
+    command:
+      {{- range $value.probes.readinessProbe.command }}
+      - {{ . }}
+      {{- end }}
+  {{- end }}
+  {{- if hasKey $value.probes.readinessProbe "httpGet" }}
+  httpGet:
+    path: {{ $value.probes.readinessProbe.httpGet.path | default "/" }}
+    port: {{ $value.probes.readinessProbe.httpGet.port | default 80 }}
+    scheme: {{ $value.probes.readinessProbe.httpGet.scheme | default "HTTP" }}
+    host: {{ $value.probes.readinessProbe.httpGet.host | default "localhost" }}
+  {{- end }}
+  {{- if hasKey $value.probes.readinessProbe "tcpSocket" }}
+  tcpSocket:
+    port: {{ $value.probes.readinessProbe.tcpSocket.port | default 80 }}
+  {{- end }}
+  initialDelaySeconds: {{ $value.probes.readinessProbe.initialDelaySeconds | default 1 }}
+  periodSeconds: {{ $value.probes.readinessProbe.periodSeconds | default 10 }}
+  timeoutSeconds: {{ $value.probes.readinessProbe.timeoutSeconds | default 5 }}
+  successThreshold: {{ $value.probes.readinessProbe.timeoutSeconds | default 1 }}
+  failureThreshold: {{ $value.probes.readinessProbe.timeoutSeconds | default 2 }}
+{{- end }}
+{{- end }}
+```
+
+**Utilisation** :
+1. Vérification de la Condition pour les Sondes ({{- if hasKey $value "probes" }}) :
+- Cette vérification garantit que les sections ultérieures ne sont traitées que si la clé "probes" est présente dans $value.
+2. Configuration de la Sonde de Vitalité ({{- if hasKey $value.probes "livenessProbe" }} ... {{- end }}) :
+- Configure la sonde de vitalité en fonction de la présence de la clé "livenessProbe" dans la section "probes" de $value.
+3. Configuration de la Sonde de Disponibilité ({{- if hasKey $value.probes "readinessProbe" }} ... {{- end }}) :
+- ²Configure la sonde de disponibilité en fonction de la présence de la clé "readinessProbe" dans la section "probes" de $value.
 
 #### Points de Montage de Volume
 Les points de montage de volume sont définis si spécifiés dans le déploiement.
@@ -249,9 +337,6 @@ La boucle range se termine à la fin du code.
 ```
 
 Cette configuration génère des déploiements Kubernetes basés sur les spécifications fournies dans le fichier de valeurs. Chaque déploiement a un nom et une configuration spécifiques, avec la possibilité de définir des répliques, des conteneurs, des volumes, et des variables d'environnement personnalisé.
-
-
-
 
 ## Services
 
@@ -384,12 +469,6 @@ resources:
     {{- end}}
 ```
 
-**Les sondes :**
-
-Les sondes permettent de vérifier l'état d'un conteneur ou d'une application s'exécutant dans un pod.
-
-
-
 #### Fin de la Boucle
 La boucle `range` se termine à la fin du code.
 
@@ -399,8 +478,43 @@ La boucle `range` se termine à la fin du code.
 
 Cette configuration génère des réclamations de volumes persistants Kubernetes basées sur les spécifications fournies dans le fichier de valeurs. Chaque réclamation de volume persistant a un nom spécifique et une configuration détaillée, avec la possibilité de définir les modes d'accès et les ressources de stockage personnalisés.
 
+## Secret
 
+### Objet Secret Kubernetes
+```yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: env-secret
+type: Opaque
+data:
+  SPRING_PROFILES_ACTIVE: cHJvZHVjdGlvbi1taWNyb3NlcnZpY2U=
+```
 
+Cet objet Secret est utilisé pour stocker des données sensibles, comme des informations d'identification ou des clés API, de manière sécurisée dans un cluster Kubernetes.
 
+### Métadonnées de l'Objet Secret
 
+```yaml
+metadata:
+  name: env-secret
+```
 
+Les métadonnées fournissent des informations descriptives sur l'objet Secret.
+name : Le nom attribué à cet objet Secret, dans cet exemple, "env-secret".
+Type du Secret
+
+```yaml
+type: Opaque
+```
+
+La propriété "type" définit le type de Secret. Dans cet exemple, le type "Opaque" est utilisé, ce qui signifie que le Secret peut contenir des données arbitraires et n'est pas structuré.
+
+### Données du Secret
+```yaml
+data:
+  SPRING_PROFILES_ACTIVE: cHJvZHVjdGlvbi1taWNyb3NlcnZpY2U=
+```
+
+La section "data" contient les paires clé-valeur des données sensibles stockées dans le Secret.
+ - **SPRING_PROFILES_ACTIVE** : Il s'agit d'une clé spécifique dans le Secret, utilisée pour stocker des informations sur les profils Spring actifs.
