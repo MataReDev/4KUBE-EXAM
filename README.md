@@ -191,7 +191,7 @@ spec:
 ```
 
 #### Image du Conteneur
-Le code ci-dessus permet de construire dynamiquement l'URL de l'image du conteneur en fonction du chemin du référentiel spécifié, avec une logique conditionnelle pour traiter les références absolues et relatives. La politique de récupération de l'image est également définie pour optimiser les performances en évitant de récupérer l'image si elle est déjà présente
+Le code ci-dessous permet de construire dynamiquement l'URL de l'image du conteneur en fonction du chemin du référentiel spécifié, avec une logique conditionnelle pour traiter les références absolues et relatives. La politique de récupération de l'image est également définie pour optimiser les performances en évitant de récupérer l'image si elle est déjà présente
 
 ``` yaml
 {{- if hasPrefix "/" $value.image.repository }}
