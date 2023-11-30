@@ -313,11 +313,11 @@ readinessProbe:
 ```
 
 **Utilisation** :
-1. Vérification de la Condition pour les Sondes ({{- if hasKey $value "probes" }}) :
+1. Vérification de la Condition pour les Sondes ```{{- if hasKey $value "probes" }}``` :
 - Cette vérification garantit que les sections ultérieures ne sont traitées que si la clé "probes" est présente dans $value.
-2. Configuration de la Sonde de Vitalité ({{- if hasKey $value.probes "livenessProbe" }} ... {{- end }}) :
+2. Configuration de la Sonde de Vitalité ```{{- if hasKey $value.probes "livenessProbe" }} ... {{- end }}``` :
 - Configure la sonde de vitalité en fonction de la présence de la clé "livenessProbe" dans la section "probes" de $value.
-3. Configuration de la Sonde de Disponibilité ({{- if hasKey $value.probes "readinessProbe" }} ... {{- end }}) :
+3. Configuration de la Sonde de Disponibilité ```{{- if hasKey $value.probes "readinessProbe" }} ... {{- end }}``` :
 - ²Configure la sonde de disponibilité en fonction de la présence de la clé "readinessProbe" dans la section "probes" de $value.
 
 #### Points de Montage de Volume
