@@ -72,8 +72,10 @@ kubectl describe service [idService]
 |   templates/
 |   |-- deployments.yaml
 |   |-- persistentVolumeClaim.yaml
+|   |-- secret.yaml
 |   |-- service.yaml
 |-- Chart.yaml
+|-- LICENSE
 |-- manifest.yaml
 |-- README.md
 |-- values.yaml
@@ -83,8 +85,10 @@ kubectl describe service [idService]
 - templates/ : Dossier contenant les modèles YAML pour les ressources Kubernetes.
 - deployments.yaml: Fichier YAML décrivant les déploiements des applications.
 - persistentVolumeClaim.yaml: Fichier YAML définissant les revendications de volume persistant.
+- secret.yaml: Fichier YAML contenant une petite quantité de données sensibles.
 - service.yaml: Fichier YAML pour la définition des services.
 - Chart.yaml: Fichier de configuration principal du chart Helm, spécifiant les métadonnées du chart.
+- LICENCES : Fichier de licence concernant les droits d'appartenance du projet.
 - manifest.yaml: Fichier manifeste principal du projet.
 - README.md: Documentation du projet, fournissant des informations sur son utilisation, son installation et d'autres détails pertinents.
 - values.yaml: Fichier de valeurs par défaut pour la configuration du chart.
