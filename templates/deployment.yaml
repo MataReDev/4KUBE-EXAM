@@ -55,15 +55,15 @@ spec:
                 {{- end }}
             {{- end }}
             {{- if hasKey $value.probes.livenessProbe "httpGet" }}
-              httpGet:
-                path: {{ $value.probes.livenessProbe.httpGet.path | default "/" }}
-                port: {{ $value.probes.livenessProbe.httpGet.port | default 80 }}
-                scheme: {{ $value.probes.livenessProbe.httpGet.scheme | default "HTTP" }}
-                host: {{ $value.probes.livenessProbe.httpGet.host | default "localhost" }}
+            httpGet:
+              path: {{ $value.probes.livenessProbe.httpGet.path | default "/" }}
+              port: {{ $value.probes.livenessProbe.httpGet.port | default 80 }}
+              scheme: {{ $value.probes.livenessProbe.httpGet.scheme | default "HTTP" }}
+              host: {{ $value.probes.livenessProbe.httpGet.host | default "localhost" }}
             {{- end }}
             {{- if hasKey $value.probes.livenessProbe "tcpSocket" }}
-              tcpSocket:
-                port: {{ $value.probes.livenessProbe.tcpSocket.port | default 80 }}
+            tcpSocket:
+              port: {{ $value.probes.livenessProbe.tcpSocket.port | default 80 }}
             {{- end }}            
             initialDelaySeconds: {{ $value.probes.livenessProbe.initialDelaySeconds | default 1 }}
             periodSeconds: {{ $value.probes.livenessProbe.periodSeconds | default 10 }}
@@ -81,15 +81,15 @@ spec:
                 {{- end }}
             {{- end }}
             {{- if hasKey $value.probes.readinessProbe "httpGet" }}
-              httpGet:
-                path: {{ $value.probes.readinessProbe.httpGet.path | default "/" }}
-                port: {{ $value.probes.readinessProbe.httpGet.port | default 80 }}
-                scheme: {{ $value.probes.readinessProbe.httpGet.scheme | default "HTTP" }}
-                host: {{ $value.probes.readinessProbe.httpGet.host | default "localhost" }}
+            httpGet:
+              path: {{ $value.probes.readinessProbe.httpGet.path | default "/" }}
+              port: {{ $value.probes.readinessProbe.httpGet.port | default 80 }}
+              scheme: {{ $value.probes.readinessProbe.httpGet.scheme | default "HTTP" }}
+              host: {{ $value.probes.readinessProbe.httpGet.host | default "localhost" }}
             {{- end }}
             {{- if hasKey $value.probes.readinessProbe "tcpSocket" }}
-              tcpSocket:
-                port: {{ $value.probes.readinessProbe.tcpSocket.port | default 80 }}
+            tcpSocket:
+              port: {{ $value.probes.readinessProbe.tcpSocket.port | default 80 }}
             {{- end }}
             initialDelaySeconds: {{ $value.probes.readinessProbe.initialDelaySeconds | default 1 }}
             periodSeconds: {{ $value.probes.readinessProbe.periodSeconds | default 10 }}
